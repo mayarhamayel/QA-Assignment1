@@ -269,10 +269,58 @@ public class ProductStockTest {
 
     }
 
+  //------------------------------Reserves stock for a customer order TEST-----------------------
+    @ParameterizedTest
+    @ValueSource(ints={0,-1})
+    void reserveWithZeroOrLessThanZeroAmount(int amount) {
+
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalArgumentException.class,()->{stock.reserve(amount);});
 
 
+    }
+    @Test
+    void reserveWithValueBigerThanOnHand(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalStateException.class,()->{stock.reserve(6);});
+    }
+
+    @Test
+    void reserveWithValidValue(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        stock.reserve(5);
+
+        assertEquals(5,stock.getReserved());
+    }
+
+    //---------------------------Releases (un-reserves) previously reserved stock TEST--------------------------
+
+    @ParameterizedTest
+    @ValueSource(ints={0,-1})
+    void releaseReservationWithZeroOrLessThanZeroAmount(int amount) {
+
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalArgumentException.class,()->{stock.releaseReservation(amount);});
+    }
+
+    @Test
+    void releaseReservationWithValueBigerThanReserved(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        stock.reserve(4);
+        assertThrows(IllegalStateException.class,()->{stock.releaseReservation(5);});
+    }
 
 
+    @Test
+    void releaseReservationWithValidValue(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        stock.reserve(4);
+        stock.releaseReservation(2);
+
+        assertEquals(2,stock.getReserved());
+    }
+
+  //---------------------------------------Confirms shipment TEST-------------------------------
 
 
 

@@ -398,7 +398,36 @@ public class ProductStockTest {
 
     }
 
+ //-----------------------------Updates max capacity TEST-----------------------------
 
+
+    @ParameterizedTest
+    @ValueSource(ints = {0,-1})
+    void updateMaxCapacityWithZeroOrLessThanZeroAmount(int amount){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalArgumentException.class,()->{stock.updateMaxCapacity(amount);});
+    }
+
+    @Test
+    void updateMaxCapacityWithValueLessThanOnHand(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalStateException.class,()->{stock.updateMaxCapacity(4);});
+    }
+
+
+    @Test
+    void updateMaxCapacityWithValidValueTest(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        stock.updateMaxCapacity(6);
+        assertEquals(6,stock.getMaxCapacity());
+    }
+
+    @Test
+    void updateMaxCapacityWithValueLessThanReorderThresholdTest(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 2, 3, 10);
+           stock.updateMaxCapacity(2);
+        assertEquals(2,stock.getReorderThreshold());
+    }
 
 
 }

@@ -378,7 +378,25 @@ public class ProductStockTest {
     }
 
 
+   //-------------------------Updates the reorder threshold TEST------------------------
+    @ParameterizedTest
+    @ValueSource(ints={20,-1})
+    void updateReorderThresholdWithValueLessThanZeroTest(int amount){
 
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalArgumentException.class,()->{stock.updateReorderThreshold(amount);});
+
+    }
+
+    @Test
+    void updateReorderThresholdWithValidValueTest(){
+
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        stock.updateReorderThreshold(5);
+        assertEquals(5,stock.getReorderThreshold());
+
+
+    }
 
 
 

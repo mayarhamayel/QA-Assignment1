@@ -360,6 +360,23 @@ public class ProductStockTest {
 
     }
 
+    //-----------------------------isReorderNeeded TEST--------------------------
+
+
+   @Test
+   void isReorderNeededTestReturnFalse(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 2, 10);
+        assertFalse(stock.isReorderNeeded());
+
+     }
+
+    @Test
+    void isReorderNeededTestReturnTrue(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 1, 2, 10);
+        assertTrue(stock.isReorderNeeded());
+
+    }
+
 
 
 

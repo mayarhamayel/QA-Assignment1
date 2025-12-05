@@ -323,6 +323,46 @@ public class ProductStockTest {
   //---------------------------------------Confirms shipment TEST-------------------------------
 
 
+    @ParameterizedTest
+    @ValueSource(ints={0,-1})
+    void shipReservedWithZeroOrLessThanZeroAmount(int amount){
+
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        assertThrows(IllegalArgumentException.class,()->{stock.shipReserved(amount);});
+
+    }
+
+    @Test
+    void shipReservedWithValueBigerThanReserved(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+        stock.reserve(4);
+        assertThrows(IllegalStateException.class,()->{stock.shipReserved(5);});
+    }
+
+    @Test
+    void shipReservedWithValueBigerThanOnHand(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+
+        assertThrows(IllegalStateException.class,()->{stock.shipReserved(6);});
+    }
+
+
+    @Test
+    void shipReservedWithValidValue(){
+        ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
+
+        stock.reserve(4);
+        stock.shipReserved(2);
+
+        assertEquals(2,stock.getReserved());
+        assertEquals(3,stock.getOnHand());
+
+
+    }
+
+
+
+
 
 
 

@@ -1,16 +1,31 @@
 package Test;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import javaa.ProductStock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
+
+@DisplayName("Product Stock Tests")
 
 public class ProductStockTest {
 
+    @BeforeAll
+    static void setUpBeforeAll() {
+        System.out.println("Starting ProductStock Test Suite...");
+    }
+
+
+    @BeforeEach
+    void setUp() {
+        System.out.println("Starting new test...");
+        ProductStock stock;
+    }
+
     //-----------IdTest-------------
 
+    @DisplayName("Constructor should create object with valid Id")
     @Test
     void ConstructorWithVailedIdTest(){
       ProductStock productStock=new ProductStock("1", "WH-1-A3", 0, 0, 1);
@@ -19,6 +34,8 @@ public class ProductStockTest {
 
     }
 
+
+    @DisplayName("Constructor should throw exception when Id is empty")
     @Test
     void ConstructorWithEmptyIdTest(){
 
@@ -28,6 +45,8 @@ public class ProductStockTest {
       });
     }
 
+
+    @DisplayName("Constructor should throw exception when Id is null")
     @Test
     void ConstructorWithNULLIdTest(){
 
@@ -37,6 +56,7 @@ public class ProductStockTest {
         });
     }
 
+    @DisplayName("Constructor should throw exception when Id is blank")
     @Test
     void ConstructorWithBlankIdTest(){
 
@@ -48,6 +68,8 @@ public class ProductStockTest {
 
     //--------------LocationTest--------------
 
+
+    @DisplayName("Constructor should create object with valid location")
     @Test
     void ConstructorWithVailedLocationTest(){
         ProductStock productStock=new ProductStock("1", "WH-1-A3", 0, 0, 1);
@@ -55,6 +77,8 @@ public class ProductStockTest {
 
     }
 
+
+    @DisplayName("Constructor should throw exception when location is empty")
     @Test
     void ConstructorWithEmptyLocationTest(){
 
@@ -150,6 +174,33 @@ public class ProductStockTest {
         });
 
     }
+    //----------------------------------Getters-------------------------------------
+    @Test
+    void testGetId(){
+        ProductStock stock = new ProductStock("5","A",1,1,5);
+        assertEquals("5", stock.getProductId());
+    }
+
+    @Test
+    void testGetLocation(){
+        ProductStock stock = new ProductStock("5","A",1,1,5);
+        assertEquals("A", stock.getLocation());
+    }
+
+    @Test
+    void testGetOnHand(){
+        ProductStock stock = new ProductStock("1","A",2,2,10);
+        assertEquals(2, stock.getOnHand());
+    }
+
+    @Test
+    void testGetReserved(){
+        ProductStock stock = new ProductStock("1","A",2,2,10);
+        stock.reserve(1);
+        assertEquals(1, stock.getReserved());
+    }
+
+
 
     // -------------------------------------------get Available stock Test----------------------------
 
@@ -191,9 +242,10 @@ public class ProductStockTest {
 
     //---------------------------------------Adds stock to on-hand quantity Test------------------------------
 
-
+    @DisplayName("addStock should throw exception for zero or negative values")
     @ParameterizedTest
     @ValueSource(ints={-1,0})
+    @Timeout(2)
     void addStockWithValuelessThanZeroTest(int amount) {
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
 
@@ -215,6 +267,7 @@ public class ProductStockTest {
 
     @ParameterizedTest
     @ValueSource(ints={1,5})
+    @Timeout(2)
     void addStockWithValidValueTest(int amount) {
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
        stock.addStock(amount);
@@ -231,9 +284,9 @@ public class ProductStockTest {
     void removeDamagedWithValuelessThanZeroTest(int amount) {
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
 
-        if(amount <= 0) {
+
             assertThrows(IllegalArgumentException.class, () -> {stock.removeDamaged(amount);});
-        }
+
 
     }
 
@@ -245,6 +298,8 @@ public class ProductStockTest {
     }
 
     @Test
+    @Timeout(2)
+    @Tag("sanity")
     void removeDamagedWithValidValueandAdjustReservedTest() {
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
 
@@ -257,6 +312,7 @@ public class ProductStockTest {
     }
 
     @Test
+    @Timeout(2)
     void removeDamagedWithValidValueandNoReservedCgangeTest() {
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
 
@@ -297,6 +353,7 @@ public class ProductStockTest {
 
     @ParameterizedTest
     @ValueSource(ints={0,-1})
+    @Tag("sanity")
     void releaseReservationWithZeroOrLessThanZeroAmount(int amount) {
 
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
@@ -312,6 +369,7 @@ public class ProductStockTest {
 
 
     @Test
+    @Timeout(2)
     void releaseReservationWithValidValue(){
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
         stock.reserve(4);
@@ -325,6 +383,8 @@ public class ProductStockTest {
 
     @ParameterizedTest
     @ValueSource(ints={0,-1})
+    @Timeout(2)
+    @Tag("sanity")
     void shipReservedWithZeroOrLessThanZeroAmount(int amount){
 
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
@@ -348,6 +408,7 @@ public class ProductStockTest {
 
 
     @Test
+    @Timeout(2)
     void shipReservedWithValidValue(){
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 0, 10);
 
@@ -362,14 +423,17 @@ public class ProductStockTest {
 
     //-----------------------------isReorderNeeded TEST--------------------------
 
-
-   @Test
+    @DisplayName("isReorderNeeded should return FALSE when stock is above threshold")
+    @Test
+    @Tag("sanity")
    void isReorderNeededTestReturnFalse(){
         ProductStock stock = new ProductStock("1", "WH-1-A3", 5, 2, 10);
         assertFalse(stock.isReorderNeeded());
 
      }
 
+
+    @DisplayName("isReorderNeeded should return TRUE when stock is below threshold")
     @Test
     void isReorderNeededTestReturnTrue(){
         ProductStock stock = new ProductStock("1", "WH-1-A3", 1, 2, 10);
@@ -423,11 +487,30 @@ public class ProductStockTest {
     }
 
     @Test
+    @Timeout(2)
     void updateMaxCapacityWithValueLessThanReorderThresholdTest(){
         ProductStock stock = new ProductStock("1", "WH-1-A3", 2, 3, 10);
            stock.updateMaxCapacity(2);
         assertEquals(2,stock.getReorderThreshold());
     }
 
+    //-------------------Feature not implemented yet Test------------------
+    @Test
+    @Disabled("Feature not implemented yet")
+    @DisplayName("Future feature: automatic reorder calculation")
+    void futureReorderFeatureTest() {
+        // Code will be added later
+    }
 
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("Test finished.");
+    }
+
+
+    @AfterAll
+    static void tearDownAfterAll() {
+        System.out.println("All tests finished.");
+    }
 }
